@@ -189,13 +189,8 @@ if vesting_method == "Custom Vesting":
         if vested_shares_input[current_year] < vested_shares_input[prev_year]:
             st.sidebar.warning(f"Note: Vested shares for {current_year} are less than {prev_year}. Typically vesting increases or stays the same each year.")
 else:
-    # Display the default schedule
-    st.sidebar.write("Default cumulative vesting schedule:")
-    default_schedule = pd.DataFrame({
-        "Year": list(vested_shares_input.keys()), 
-        "Vested Shares": list(vested_shares_input.values())
-    })
-    st.sidebar.dataframe(default_schedule, hide_index=True)
+    # Default schedule is used but not displayed
+    # Simply use the default values, but don't show the schedule in the sidebar
     
     try:
         with col1:
