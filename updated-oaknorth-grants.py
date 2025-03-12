@@ -120,10 +120,7 @@ for year in years_range:
         # Ensure we don't exceed the total grant shares
         vested_shares_input[year] = min(100000, total_grant_shares)
 
-# Custom vesting inputs
-st.sidebar.write("Enter cumulative vested shares for each year:")
-
-# Use columns for more compact layout
+# Create columns for input layout
 col1, col2 = st.sidebar.columns(2)
 
 # Year distribution between columns
@@ -502,18 +499,8 @@ with tab2:
     st.header("A-Share/Options Grant Value")
     st.markdown(f"**A-Share/Options Redemption Rate: {int(option_redemption_rate*100)}%, PBT Growth: {int(pbt_growth_rate*100)}%**")
     
-    # Display vesting schedule used in calculations
-    try:
-        vesting_data = {
-            "Year": list(vested_shares_input.keys()),
-            "Vested Shares": list(vested_shares_input.values())
-        }
-        st.subheader("Cumulative Vesting Schedule Used")
-        vesting_df = pd.DataFrame(vesting_data)
-        st.dataframe(vesting_df, use_container_width=True, hide_index=True)
-    except Exception as e:
-        st.warning(f"Could not display vesting schedule table: {str(e)}")
-        st.write("Vesting schedule is being used but cannot be displayed due to an error.")
+    # Vesting schedule is used in calculations but not displayed in UI
+    # (Removed cumulative vesting schedule table as requested)
     
     # Options Summary Table - Simplified columns
     try:
