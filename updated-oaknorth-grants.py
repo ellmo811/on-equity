@@ -466,6 +466,7 @@ if total_common_shares > 0:
         # Common Share Sensitivity Analysis (redemption rates with fixed 20% PBT growth)
         try:
             st.subheader("Common Share Value Sensitivity to Redemption Rate (£ thousands)")
+            st.write("*Fixed assumption: PBT Growth Rate = 20%*")
             
             # Fixed PBT growth of 20%
             fixed_growth = 0.20
@@ -521,6 +522,7 @@ with tab2:
     # Options Sensitivity Analysis (redemption rates with fixed 20% PBT growth)
     try:
         st.subheader("Option Value Sensitivity to Redemption Rate (£ thousands)")
+        st.write("*Fixed assumption: PBT Growth Rate = 20%*")
         
         # Fixed PBT growth of 20%
         fixed_growth = 0.20
@@ -570,6 +572,7 @@ if total_common_shares > 0:
         # Combined Sensitivity Analysis (PBT growth rates with fixed 0% redemption)
         try:
             st.subheader("Combined Value Sensitivity to PBT Growth Rate (£ thousands)")
+            st.write("*Fixed assumption: Redemption Rate = 0%*")
             
             # Fixed redemption rate of 0%
             fixed_redemption = 0.00
