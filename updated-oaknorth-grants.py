@@ -94,6 +94,9 @@ total_grant_shares = st.sidebar.number_input(
 # Cumulative vesting schedule inputs
 st.sidebar.subheader("Cumulative Vesting Schedule")
 
+# Define vesting_method variable before it's used
+vesting_method = "Custom Vesting"  # Default value
+
 # Set default values for all years
 default_values = {
     2025: 60000,
@@ -122,6 +125,10 @@ st.sidebar.write("Enter cumulative vested shares for each year:")
 
 # Use columns for more compact layout
 col1, col2 = st.sidebar.columns(2)
+
+# Year distribution between columns
+first_half = list(years_range)[:len(list(years_range))//2 + 1]
+second_half = list(years_range)[len(list(years_range))//2 + 1:]
 
 if vesting_method == "Custom Vesting":
     # Custom vesting inputs
