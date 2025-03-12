@@ -133,6 +133,61 @@ if vesting_method == "Custom Vesting":
     first_half = list(years_range)[:len(list(years_range))//2 + 1]
     second_half = list(years_range)[len(list(years_range))//2 + 1:]
     
+    try:
+        with col1:
+            for year in first_half:
+                default_value = default_values.get(year, 100000)  # Use the default values dictionary
+                # Ensure default value doesn't exceed total grant shares
+                default_value = min(default_value, int(total_grant_shares))
+                # Custom number input without +/- buttons
+                vested_shares_input[year] = st.text_input(
+                    f"{year}",
+                    value=str(default_value),
+                    key=f"vest_{year}"
+                )
+                # Convert input to integer with validation
+                try:
+                    vested_shares_input[year] = int(vested_shares_input[year])
+                    # Apply constraints
+                    vested_shares_input[year] = min(max(0, vested_shares_input[year]), min(1000000, int(total_grant_shares)))
+                except:
+                    vested_shares_input[year] = default_value
+        
+        with col2:
+            for year in second_half:
+                default_value = min(100000, int(total_grant_shares))
+                # Custom number input without +/- buttons
+                vested_shares_input[year] = st.text_input(
+                    f"{year}",
+                    value=str(default_value),
+                    key=f"vest_{year}"
+                )
+                # Convert input to integer with validation
+                try:
+                    vested_shares_input[year] = int(vested_shares_input[year])
+                    # Apply constraints
+                    vested_shares_input[year] = min(max(0, vested_shares_input[year]), min(1000000, int(total_grant_shares)))
+                except:
+                    vested_shares_input[year] = default_value
+    except Exception as e:
+        st.sidebar.error(f"Error with custom vesting inputs: {str(e)}")
+        # Fall back to default vesting if custom fails
+        for year in years_range:
+            if year in default_values:
+                # Ensure we don't exceed the total grant shares
+                default_value = min(default_values[year], total_grant_shares) 
+                vested_shares_input[year] = default_value
+            else:
+                # Ensure we don't exceed the total grant shares
+                vested_shares_input[year] = min(100000, total_grant_shares)
+
+    # Validation check to ensure vesting is non-decreasing or provide warning
+    sorted_years = sorted(vested_shares_input.keys())
+    for i in range(1, len(sorted_years)):
+        current_year = sorted_years[i]
+        prev_year = sorted_years[i-1]
+        if vested_shares_input[current_year] < vested_shares_input[prev_year]:
+            st.sidebar.warning(f"Note: Vested shares for {current_year} are less than {prev_year}. Typically vesting increases or stays the same each year.")
 else:
     # Display the default schedule
     st.sidebar.write("Default cumulative vesting schedule:")
@@ -419,27 +474,22 @@ if total_common_shares > 0:
             redemption_rates = [0.00, 0.05, 0.10]  # 0%, 5%, 10%
             
             # Generate data for each redemption rate
-            chart_data = pd.DataFrame({
-                "Year": common_years
-            })
+            chart_data = {}
             
             # Calculate values for each redemption rate
             for rate in redemption_rates:
                 rate_results = calculate_results(fixed_growth, rate, None)
                 chart_data[f"{int(rate*100)}% Redemption"] = [
-                    round(rate_results[year]['Total Common Share Value'] / 1000, 0) 
+                    int(round(rate_results[year]['Total Common Share Value'] / 1000, 0))
                     for year in common_years
                 ]
             
-            # Set year as index and format without commas
-            chart_data = chart_data.set_index("Year")
-            
-            # Format the values to integers (no decimals, no commas)
-            for col in chart_data.columns:
-                chart_data[col] = chart_data[col].astype(int)
+            # Create DataFrame with year labels as strings to maintain formatting
+            year_labels = [str(year) for year in common_years]
+            chart_df = pd.DataFrame(chart_data, index=year_labels)
             
             # Plot line chart
-            st.line_chart(chart_data)
+            st.line_chart(chart_df)
         except Exception as e:
             st.warning(f"Could not display common share sensitivity chart: {str(e)}")
             st.write("Please check your inputs for potential issues.")
@@ -489,27 +539,22 @@ with tab2:
         redemption_rates = [0.00, 0.05, 0.10]  # 0%, 5%, 10%
         
         # Generate data for each redemption rate
-        chart_data = pd.DataFrame({
-            "Year": option_years
-        })
+        chart_data = {}
         
         # Calculate values for each redemption rate
         for rate in redemption_rates:
             rate_results = calculate_results(fixed_growth, None, rate)
             chart_data[f"{int(rate*100)}% Redemption"] = [
-                round(rate_results[year]['Total Grant Value'] / 1000, 0) 
+                int(round(rate_results[year]['Total Grant Value'] / 1000, 0))
                 for year in option_years
             ]
         
-        # Set year as index and format without commas
-        chart_data = chart_data.set_index("Year")
-        
-        # Format the values to integers (no decimals, no commas)
-        for col in chart_data.columns:
-            chart_data[col] = chart_data[col].astype(int)
+        # Create DataFrame with year labels as strings to maintain formatting
+        year_labels = [str(year) for year in option_years]
+        chart_df = pd.DataFrame(chart_data, index=year_labels)
         
         # Plot line chart
-        st.line_chart(chart_data)
+        st.line_chart(chart_df)
     except Exception as e:
         st.warning(f"Could not display option sensitivity chart: {str(e)}")
         st.write("Please check your inputs for potential issues.")
@@ -543,27 +588,22 @@ if total_common_shares > 0:
             growth_rates = [0.15, 0.20]  # 15%, 20%
             
             # Generate data for each growth rate
-            chart_data = pd.DataFrame({
-                "Year": combined_years
-            })
+            chart_data = {}
             
             # Calculate values for each growth rate
             for rate in growth_rates:
                 rate_results = calculate_results(rate, fixed_redemption, fixed_redemption)
                 chart_data[f"{int(rate*100)}% Growth"] = [
-                    round(rate_results[year]['Combined Total Value'] / 1000, 0) 
+                    int(round(rate_results[year]['Combined Total Value'] / 1000, 0))
                     for year in combined_years
                 ]
             
-            # Set year as index and format without commas
-            chart_data = chart_data.set_index("Year")
-            
-            # Format the values to integers (no decimals, no commas)
-            for col in chart_data.columns:
-                chart_data[col] = chart_data[col].astype(int)
+            # Create DataFrame with year labels as strings to maintain formatting
+            year_labels = [str(year) for year in combined_years]
+            chart_df = pd.DataFrame(chart_data, index=year_labels)
             
             # Plot line chart
-            st.line_chart(chart_data)
+            st.line_chart(chart_df)
         except Exception as e:
             st.warning(f"Could not display combined sensitivity chart: {str(e)}")
             st.write("Please check your inputs for potential issues.")
