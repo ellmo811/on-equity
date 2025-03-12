@@ -494,7 +494,7 @@ if total_common_shares > 0:
         except Exception as e:
             st.warning(f"Could not display common share sensitivity chart: {str(e)}")
             st.write("Please check your inputs for potential issues.")
-            
+        
         # Add disclaimer at bottom of tab
         st.markdown("---")
         st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")
@@ -554,7 +554,7 @@ with tab2:
     except Exception as e:
         st.warning(f"Could not display option sensitivity chart: {str(e)}")
         st.write("Please check your inputs for potential issues.")
-        
+    
     # Add disclaimer at bottom of tab
     st.markdown("---")
     st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")
@@ -564,6 +564,18 @@ if total_common_shares > 0:
     with tab3:
         st.header("Combined Analysis")
         st.markdown(f"**Common Share Redemption Rate: {int(common_redemption_rate*100)}%, A-Share/Options Redemption Rate: {int(option_redemption_rate*100)}%, PBT Growth: {int(pbt_growth_rate*100)}%**")
+        
+        # Combined Summary Table
+        combined_years = list(range(2025, 2036))
+        combined_data = {
+            "Year": combined_years,
+            "Share Price (£)": [f"£{results[year]['Share Price']:.0f}" for year in combined_years],
+            "Common Share Value (£)": [f"£{results[year]['Total Common Share Value']:,.0f}" for year in combined_years],
+            "A-Share/Options Value (£)": [f"£{results[year]['Total Grant Value']:,.0f}" for year in combined_years],
+            "Combined Total Value (£)": [f"£{results[year]['Combined Total Value']:,.0f}" for year in combined_years]
+        }
+        combined_df = pd.DataFrame(combined_data)
+        st.dataframe(combined_df, use_container_width=True, hide_index=True)
         
         # Combined Sensitivity Analysis (PBT growth rates with fixed 0% redemption)
         try:
@@ -596,19 +608,7 @@ if total_common_shares > 0:
         except Exception as e:
             st.warning(f"Could not display combined sensitivity chart: {str(e)}")
             st.write("Please check your inputs for potential issues.")
-            
+        
         # Add disclaimer at bottom of tab
         st.markdown("---")
-        st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")d Summary Table
-        combined_years = list(range(2025, 2036))
-        combined_data = {
-            "Year": combined_years,
-            "Share Price (£)": [f"£{results[year]['Share Price']:.0f}" for year in combined_years],
-            "Common Share Value (£)": [f"£{results[year]['Total Common Share Value']:,.0f}" for year in combined_years],
-            "A-Share/Options Value (£)": [f"£{results[year]['Total Grant Value']:,.0f}" for year in combined_years],
-            "Combined Total Value (£)": [f"£{results[year]['Combined Total Value']:,.0f}" for year in combined_years]
-        }
-        combined_df = pd.DataFrame(combined_data)
-        st.dataframe(combined_df, use_container_width=True, hide_index=True)
-        
-        # Combine
+        st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")
