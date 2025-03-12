@@ -466,7 +466,7 @@ if total_common_shares > 0:
         # Common Share Sensitivity Analysis (redemption rates with fixed 20% PBT growth)
         try:
             st.subheader("Common Share Value Sensitivity to Redemption Rate (£ thousands)")
-            st.write("*Fixed assumption: PBT Growth Rate = 20%*")
+            st.caption("Fixed assumption: PBT Growth Rate = 20%")
             
             # Fixed PBT growth of 20%
             fixed_growth = 0.20
@@ -494,6 +494,10 @@ if total_common_shares > 0:
         except Exception as e:
             st.warning(f"Could not display common share sensitivity chart: {str(e)}")
             st.write("Please check your inputs for potential issues.")
+            
+        # Add disclaimer at bottom of tab
+        st.markdown("---")
+        st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")
 
 # Tab 2: Options Results
 with tab2:
@@ -522,7 +526,7 @@ with tab2:
     # Options Sensitivity Analysis (redemption rates with fixed 20% PBT growth)
     try:
         st.subheader("Option Value Sensitivity to Redemption Rate (£ thousands)")
-        st.write("*Fixed assumption: PBT Growth Rate = 20%*")
+        st.caption("Fixed assumption: PBT Growth Rate = 20%")
         
         # Fixed PBT growth of 20%
         fixed_growth = 0.20
@@ -550,6 +554,10 @@ with tab2:
     except Exception as e:
         st.warning(f"Could not display option sensitivity chart: {str(e)}")
         st.write("Please check your inputs for potential issues.")
+        
+    # Add disclaimer at bottom of tab
+    st.markdown("---")
+    st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")
 
 # Tab 3: Combined Analysis
 if total_common_shares > 0:
@@ -557,22 +565,10 @@ if total_common_shares > 0:
         st.header("Combined Analysis")
         st.markdown(f"**Common Share Redemption Rate: {int(common_redemption_rate*100)}%, A-Share/Options Redemption Rate: {int(option_redemption_rate*100)}%, PBT Growth: {int(pbt_growth_rate*100)}%**")
         
-        # Combined Summary Table
-        combined_years = list(range(2025, 2036))
-        combined_data = {
-            "Year": combined_years,
-            "Share Price (£)": [f"£{results[year]['Share Price']:.0f}" for year in combined_years],
-            "Common Share Value (£)": [f"£{results[year]['Total Common Share Value']:,.0f}" for year in combined_years],
-            "A-Share/Options Value (£)": [f"£{results[year]['Total Grant Value']:,.0f}" for year in combined_years],
-            "Combined Total Value (£)": [f"£{results[year]['Combined Total Value']:,.0f}" for year in combined_years]
-        }
-        combined_df = pd.DataFrame(combined_data)
-        st.dataframe(combined_df, use_container_width=True, hide_index=True)
-        
         # Combined Sensitivity Analysis (PBT growth rates with fixed 0% redemption)
         try:
             st.subheader("Combined Value Sensitivity to PBT Growth Rate (£ thousands)")
-            st.write("*Fixed assumption: Redemption Rate = 0%*")
+            st.caption("Fixed assumption: Redemption Rate = 0%")
             
             # Fixed redemption rate of 0%
             fixed_redemption = 0.00
@@ -600,3 +596,19 @@ if total_common_shares > 0:
         except Exception as e:
             st.warning(f"Could not display combined sensitivity chart: {str(e)}")
             st.write("Please check your inputs for potential issues.")
+            
+        # Add disclaimer at bottom of tab
+        st.markdown("---")
+        st.caption("**Disclaimer**: Illustrative Only, future valuation is not guaranteed and redemption plans subject to management decision.")d Summary Table
+        combined_years = list(range(2025, 2036))
+        combined_data = {
+            "Year": combined_years,
+            "Share Price (£)": [f"£{results[year]['Share Price']:.0f}" for year in combined_years],
+            "Common Share Value (£)": [f"£{results[year]['Total Common Share Value']:,.0f}" for year in combined_years],
+            "A-Share/Options Value (£)": [f"£{results[year]['Total Grant Value']:,.0f}" for year in combined_years],
+            "Combined Total Value (£)": [f"£{results[year]['Combined Total Value']:,.0f}" for year in combined_years]
+        }
+        combined_df = pd.DataFrame(combined_data)
+        st.dataframe(combined_df, use_container_width=True, hide_index=True)
+        
+        # Combine
